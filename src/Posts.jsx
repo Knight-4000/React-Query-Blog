@@ -16,11 +16,12 @@ export function Posts() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   // replace with useQuery
-  const {data} = useQuery("posts", fetchPosts);
+  const {data, isError, error, isLoading} = useQuery("posts", fetchPosts);
 
   // If fetchPosts has not resolved data yet, early return a div
   // But when fetchPosts resolves, now we can map the data.
-if (!data) return <div />;
+if (isLoading) return <h3>Loading...</h3>;
+if (isError) return <><h3>Me not know what me doing</h3><p>{error.toString()}</p></>
 
   return (
     <>
