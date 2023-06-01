@@ -16,7 +16,8 @@ export function Posts() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   // replace with useQuery
-  const {data, isError, error, isLoading} = useQuery("posts", fetchPosts);
+  const {data, isError, error, isLoading} = useQuery("posts", 
+  fetchPosts, { staleTime: 2000});
 
   // If fetchPosts has not resolved data yet, early return a div
   // But when fetchPosts resolves, now we can map the data.
