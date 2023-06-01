@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { PostDetail } from "./PostDetail";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 // 100 posts in api so 10 pages of 10 posts each. Here and on line 11.
 const maxPostPage = 10;
@@ -16,11 +16,24 @@ async function fetchPosts(pageNum) {
 export function Posts(pageNum) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if(currentPage < maxPostPage) {
+    const nextPage = currentPage + 1;
+    queryClient.prefetchQuery(["posts", nextPage], () => fetchPosts(nextPage));
+    }
+  }, [currentPage, queryClient]);
+
 
   // replace with useQuery
   const {data, isError, error, isLoading} = useQuery(
     ["posts", currentPage], 
-  () => fetchPosts(currentPage), { staleTime: 2000});
+  () => fetchPosts(currentPage), { 
+    staleTime: 2000,
+  // In case someone wants to go back to a previous page
+  keepPreviousData: true,
+  });
 
   // If fetchPosts has not resolved data yet, early return a div
   // But when fetchPosts resolves, now we can map the data.
